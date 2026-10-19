@@ -1,0 +1,2801 @@
+{
+  "info": {
+    "name": "Taller Marvel - Pruebas funcionales",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para la API NestJS del taller ISIS3710. 83 peticiones con aserciones de estado y contenido.\n\nUSO: Docker marvel_db y API encendidos; importar en Postman y ejecutar toda la colección en orden, en modo local y con 1 iteración. baseUrl=http://localhost:3000. No requiere environment ni archivo de datos.\n\nLos códigos 400, 404 y 409 son éxitos de prueba cuando así se indica. Los nuevos ids se capturan automáticamente. La colección crea cuatro equipos y dos personajes exclusivos, y los elimina al terminar. Conserva los registros previos (incluidos los registros manuales del usuario), salvo que un fallo de la API impida completar la limpieza. Si se interrumpe la ejecución, pueden quedar registros con prefijo QA-.\n\nCobertura: los 13 endpoints; nombres/alias duplicados; equipos y personajes inexistentes; filtros separados y combinados; poder entre 1 y 100; estados válidos; equipos activos; asignaciones POST/PATCH con reasignación y rollback; prohibición de eliminar equipos con personajes; desactivación; transición RETIRED a INJURED por PUT/PATCH; RETIRED a ACTIVE; CRUD y limpieza.\n\nLa estructura y scripts fueron revisados al generar el archivo. La ejecución real debe realizarse contra la API del usuario para confirmar resultados."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "missingId",
+      "value": "2147483647",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Consultas y preparación",
+      "item": [
+        {
+          "name": "01 - Consultar equipos y comenzar ejecución",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"runSuffix\", Date.now().toString() + \"-\" + Math.floor(Math.random() * 100000));",
+                  "pm.collectionVariables.unset(\"teamAId\");",
+                  "pm.collectionVariables.unset(\"teamBId\");",
+                  "pm.collectionVariables.unset(\"inactiveTeamId\");",
+                  "pm.collectionVariables.unset(\"teamCId\");",
+                  "pm.collectionVariables.unset(\"characterAId\");",
+                  "pm.collectionVariables.unset(\"characterBId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"La respuesta es una lista\", function () { const b = pm.response.json(); pm.expect(b).to.be.an(\"array\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"baselineTeams\", JSON.stringify(pm.response.json()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Consultar personajes y guardar estado inicial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"La respuesta es una lista\", function () { const b = pm.response.json(); pm.expect(b).to.be.an(\"array\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"baselineCharacters\", JSON.stringify(pm.response.json()));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - CRUD básico y validaciones de equipos",
+      "item": [
+        {
+          "name": "03 - Crear equipo A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-A-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"teamAId\", b.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Crear equipo B con lista opcional vacía",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-B-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true,\n  \"characterIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"teamBId\", b.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Crear equipo inactivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-Inactivo-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"inactiveTeamId\", b.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Consultar equipo por id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Id correcto\", function () { const b = pm.response.json(); pm.expect(b.id).to.eql(Number(pm.collectionVariables.get('teamAId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Consultar equipo sin personajes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Lista vacía\", function () { const b = pm.response.json(); pm.expect(b).to.eql([]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 - Nombre duplicado al crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 409. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-A-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 - Nombre duplicado al reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 409. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-A-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 - Verificar que el conflicto no cambió el equipo B",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Nombre original conservado\", function () { const b = pm.response.json(); pm.expect(b.name).to.eql(pm.variables.replaceIn(\"QA-Equipo-B-{{runSuffix}}\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 - Reemplazar equipo A completo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-A-{{runSuffix}}\",\n  \"base\": null,\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Se actualizó base\", function () { const b = pm.response.json(); pm.expect(b.base).to.eql(null); pm.expect(b.active).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 - Nombre obligatorio al crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - PUT requiere datos completos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14 - Año fuera del rango del esquema",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-Invalido-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 1800,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15 - Booleano inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-Invalido-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": \"true\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16 - Propiedad no permitida",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-Invalido-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true,\n  \"campoExtra\": \"x\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - CRUD y filtros de personajes",
+      "item": [
+        {
+          "name": "17 - Crear personaje A con poder mínimo y equipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 1,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": {{teamAId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"characterAId\", b.id); }",
+                  "pm.test(\"Equipo asociado correcto\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(Number(pm.collectionVariables.get('teamAId'))); pm.expect(b.team.id).to.eql(Number(pm.collectionVariables.get('teamAId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18 - Crear personaje B retirado sin equipo y poder máximo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA B\",\n  \"alias\": \"QA-Heroe-B-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 100,\n  \"status\": \"RETIRED\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"characterBId\", b.id); }",
+                  "pm.test(\"Sin equipo\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(null); pm.expect(b.team).to.eql(null); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19 - Consultar personaje con datos del equipo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Equipo asociado correcto\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(Number(pm.collectionVariables.get('teamAId'))); pm.expect(b.team.id).to.eql(Number(pm.collectionVariables.get('teamAId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20 - Consultar personajes de equipo A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Contiene al personaje A\", function () { const b = pm.response.json(); pm.expect(b.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('characterAId'))]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "21 - Filtrar por equipo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?teamId={{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Filtro por equipo correcto\", function () { const b = pm.response.json(); pm.expect(b.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('characterAId'))]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22 - Filtrar por estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?status=RETIRED",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Solo retirados e incluye al personaje B\", function () { const b = pm.response.json(); pm.expect(b.every(x => x.status === 'RETIRED')).to.eql(true); pm.expect(b.map(x => x.id)).to.include(Number(pm.collectionVariables.get('characterBId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "23 - Combinar filtros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?status=ACTIVE&teamId={{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Solo personaje A activo\", function () { const b = pm.response.json(); pm.expect(b.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('characterAId'))]); pm.expect(b[0].status).to.eql('ACTIVE'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "24 - Filtro combinado sin coincidencias",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?status=MISSING&teamId={{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Lista vacía\", function () { const b = pm.response.json(); pm.expect(b).to.eql([]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "25 - Alias duplicado al crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 409. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "26 - Alias duplicado al reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}",
+            "description": "Resultado esperado: HTTP 409. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA B\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"RETIRED\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "27 - Poder menor que 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 0,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "28 - Poder mayor que 100",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 101,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "29 - Poder decimal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50.5,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "30 - Estado inválido al crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"INVALID\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "31 - Estado inválido al reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"INVALID\",\n  \"is_villain\": false,\n  \"team_id\": {{teamAId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "32 - Estado inválido al cambiar solo estado",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}/status",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INVALID\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "33 - Estado inválido en filtros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?status=INVALID",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "34 - Equipo inválido en filtros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters?teamId=abc",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "35 - Datos obligatorios ausentes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alias\": \"QA-Incompleto-{{runSuffix}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Recursos inexistentes y equipos inactivos",
+      "item": [
+        {
+          "name": "36 - Consultar equipo inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "37 - Consultar personajes de equipo inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{missingId}}/characters",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "38 - Reemplazar equipo inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-NoExiste-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "39 - Asignar a equipo inexistente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{missingId}}/characters",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterIds\": [\n    {{characterAId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "40 - Eliminar equipo inexistente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "41 - Consultar personaje inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "42 - Reemplazar personaje inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA NoExiste\",\n  \"alias\": \"QA-Heroe-NoExiste-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "43 - Cambiar estado de personaje inexistente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{missingId}}/status",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "44 - Eliminar personaje inexistente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{missingId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "45 - Crear personaje con equipo inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": {{missingId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "46 - Reemplazar personaje con equipo inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": {{missingId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "47 - Crear personaje en equipo inactivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA Invalido\",\n  \"alias\": \"QA-Heroe-Invalido-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": {{inactiveTeamId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "48 - Reemplazar personaje con equipo inactivo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": {{inactiveTeamId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "49 - Asignar personajes a equipo inactivo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{inactiveTeamId}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterIds\": [\n    {{characterAId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Transiciones de estado",
+      "item": [
+        {
+          "name": "50 - Impedir RETIRED a INJURED mediante PATCH",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}/status",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INJURED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "51 - Verificar que conserva RETIRED",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Sigue retirado\", function () { const b = pm.response.json(); pm.expect(b.status).to.eql(\"RETIRED\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "52 - Permitir RETIRED a ACTIVE",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}/status",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Estado ACTIVE\", function () { const b = pm.response.json(); pm.expect(b.status).to.eql(\"ACTIVE\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "53 - Permitir ACTIVE a INJURED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}/status",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INJURED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Estado INJURED\", function () { const b = pm.response.json(); pm.expect(b.status).to.eql(\"INJURED\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "54 - Reemplazo completo vuelve a RETIRED",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA B\",\n  \"alias\": \"QA-Heroe-B-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"RETIRED\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Estado RETIRED\", function () { const b = pm.response.json(); pm.expect(b.status).to.eql(\"RETIRED\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "55 - Impedir RETIRED a INJURED también mediante PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA B\",\n  \"alias\": \"QA-Heroe-B-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"INJURED\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "56 - Reactivar personaje B para asignaciones",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}/status",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - Asignaciones y operaciones atómicas",
+      "item": [
+        {
+          "name": "57 - PATCH rechaza lista vacía",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}/characters",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "58 - PATCH con un personaje inexistente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}/characters",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterIds\": [\n    {{characterAId}},\n    {{missingId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "59 - Verificar que PATCH fallido no reasignó al personaje A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Equipo asociado correcto\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(Number(pm.collectionVariables.get('teamAId'))); pm.expect(b.team.id).to.eql(Number(pm.collectionVariables.get('teamAId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "60 - POST con un personaje inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-Fallido-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true,\n  \"characterIds\": [\n    {{characterAId}},\n    {{missingId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "61 - Verificar rollback del equipo fallido y personaje",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"El equipo fallido no quedó creado\", function () { const b = pm.response.json(); pm.expect(b.some(x => x.name === pm.variables.replaceIn(\"QA-Equipo-Fallido-{{runSuffix}}\"))).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "62 - POST inactivo con personajes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 400. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-InactivoFallido-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": false,\n  \"characterIds\": [\n    {{characterAId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "63 - Verificar rollback del equipo inactivo fallido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"El equipo inactivo fallido no quedó creado\", function () { const b = pm.response.json(); pm.expect(b.some(x => x.name === pm.variables.replaceIn(\"QA-Equipo-InactivoFallido-{{runSuffix}}\"))).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "64 - Crear equipo C asignando varios personajes por POST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 201. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-C-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true,\n  \"characterIds\": [\n    {{characterAId}},\n    {{characterBId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) { const b = pm.response.json(); if (Number.isInteger(b.id) && b.id > 0) pm.collectionVariables.set(\"teamCId\", b.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "65 - Verificar asignación por POST",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamCId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Ambos personajes están en C\", function () { const b = pm.response.json(); pm.expect(b.map(x => x.id).sort((a,b) => a-b)).to.eql([Number(pm.collectionVariables.get('characterAId')), Number(pm.collectionVariables.get('characterBId'))].sort((a,b) => a-b)); pm.expect(b.every(x => x.team_id === Number(pm.collectionVariables.get('teamCId')))).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "66 - Reasignar varios personajes mediante PATCH",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterIds\": [\n    {{characterAId}},\n    {{characterBId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Ambos personajes ahora están en B\", function () { const b = pm.response.json(); pm.expect(b.map(x => x.id).sort((a,b) => a-b)).to.eql([Number(pm.collectionVariables.get('characterAId')), Number(pm.collectionVariables.get('characterBId'))].sort((a,b) => a-b)); pm.expect(b.every(x => x.team_id === Number(pm.collectionVariables.get('teamBId')))).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "67 - Verificar que C quedó sin personajes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamCId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"C vacío después de reasignación\", function () { const b = pm.response.json(); pm.expect(b).to.eql([]); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - Eliminación restringida y reemplazos",
+      "item": [
+        {
+          "name": "68 - Impedir eliminar equipo B con personajes",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 409. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "69 - Desactivar equipo B mediante PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-B-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Equipo desactivado\", function () { const b = pm.response.json(); pm.expect(b.active).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "70 - Verificar que desactivar conserva a sus personajes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conserva los dos personajes\", function () { const b = pm.response.json(); pm.expect(b).to.have.lengthOf(2); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "71 - Reactivar equipo B para terminar las pruebas",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA-Equipo-B-{{runSuffix}}\",\n  \"base\": \"Laboratorio del taller\",\n  \"founded_year\": 2026,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "72 - Reemplazar personaje A y cambiarlo al equipo C",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 75,\n  \"status\": \"MISSING\",\n  \"is_villain\": false,\n  \"team_id\": {{teamCId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Equipo asociado correcto\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(Number(pm.collectionVariables.get('teamCId'))); pm.expect(b.team.id).to.eql(Number(pm.collectionVariables.get('teamCId'))); });",
+                  "pm.test(\"Reemplazo aplicado\", function () { const b = pm.response.json(); pm.expect(b.status).to.eql(\"MISSING\"); pm.expect(b.power_level).to.eql(75); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "73 - Desasociar personaje A mediante PUT con team_id null",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"real_name\": \"Personaje QA A\",\n  \"alias\": \"QA-Heroe-A-{{runSuffix}}\",\n  \"main_power\": \"Control de energia\",\n  \"power_level\": 50,\n  \"status\": \"ACTIVE\",\n  \"is_villain\": false,\n  \"team_id\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Personaje sin equipo\", function () { const b = pm.response.json(); pm.expect(b.team_id).to.eql(null); pm.expect(b.team).to.eql(null); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 - Limpieza de registros creados y comprobación final",
+      "item": [
+        {
+          "name": "74 - Eliminar personaje A de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "75 - Confirmar eliminación de personaje A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterAId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "76 - Eliminar personaje B de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters/{{characterBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "77 - Eliminar equipo A vacío",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "78 - Confirmar eliminación de equipo A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamAId}}",
+            "description": "Resultado esperado: HTTP 404. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "79 - Eliminar equipo B vacío",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamBId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "80 - Eliminar equipo C vacío",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{teamCId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "81 - Eliminar equipo inactivo de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams/{{inactiveTeamId}}",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "82 - Verificar que los equipos previos quedaron iguales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/teams",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Estado inicial de equipos conservado\", function () { const b = pm.response.json(); pm.expect(b).to.deep.eql(JSON.parse(pm.collectionVariables.get(\"baselineTeams\"))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "83 - Verificar que los personajes previos quedaron iguales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/characters",
+            "description": "Resultado esperado: HTTP 200. Ejecutar la colección completa y en orden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Estado inicial de personajes conservado\", function () { const b = pm.response.json(); pm.expect(b).to.deep.eql(JSON.parse(pm.collectionVariables.get(\"baselineCharacters\"))); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

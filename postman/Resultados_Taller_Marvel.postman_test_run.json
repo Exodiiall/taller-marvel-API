@@ -1,0 +1,2781 @@
+{
+	"id": "2d4329ea-e622-4f7c-b150-8441dc9faeed",
+	"name": "Taller Marvel - Pruebas funcionales",
+	"timestamp": "2026-10-19T00:44:02.193Z",
+	"collection_id": "47436403-08a172a4-509c-4058-97e7-cc295118d690",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 114,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-10-19T00:43:54.420Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "01d50ac0-b73a-40f8-84a3-a8feb9568071",
+			"name": "01 - Consultar equipos y comenzar ejecución",
+			"url": "http://localhost:3000/teams",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"La respuesta es una lista": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"La respuesta es una lista": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"La respuesta es una lista": true
+				}
+			]
+		},
+		{
+			"id": "ab988faa-27cd-431f-b2f4-070d4c18150c",
+			"name": "02 - Consultar personajes y guardar estado inicial",
+			"url": "http://localhost:3000/characters",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"La respuesta es una lista": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"La respuesta es una lista": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"La respuesta es una lista": true
+				}
+			]
+		},
+		{
+			"id": "6b5dc5a8-9c13-47b7-aaf2-c95dfadfae51",
+			"name": "03 - Crear equipo A",
+			"url": "http://localhost:3000/teams",
+			"time": 9,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"HTTP 201": true
+				}
+			]
+		},
+		{
+			"id": "94ff4f21-527b-46c8-8152-20b46330c8ee",
+			"name": "04 - Crear equipo B con lista opcional vacía",
+			"url": "http://localhost:3000/teams",
+			"time": 6,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 201": true
+				}
+			]
+		},
+		{
+			"id": "0422f0d3-9290-4be2-b1bf-530edcff47b1",
+			"name": "05 - Crear equipo inactivo",
+			"url": "http://localhost:3000/teams",
+			"time": 6,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 201": true
+				}
+			]
+		},
+		{
+			"id": "90f088e8-0ed7-423a-bcf3-995dc1244dd3",
+			"name": "06 - Consultar equipo por id",
+			"url": "http://localhost:3000/teams/9",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Id correcto": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Id correcto": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Id correcto": true
+				}
+			]
+		},
+		{
+			"id": "92abd59f-d4e1-4e34-814e-c9d4cb3d8fdb",
+			"name": "07 - Consultar equipo sin personajes",
+			"url": "http://localhost:3000/teams/9/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Lista vacía": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Lista vacía": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Lista vacía": true
+				}
+			]
+		},
+		{
+			"id": "9765b5a0-fdae-4e60-9f54-209f0d335958",
+			"name": "08 - Nombre duplicado al crear",
+			"url": "http://localhost:3000/teams",
+			"time": 6,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"HTTP 409": true
+			},
+			"testPassFailCounts": {
+				"HTTP 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 409": true
+				}
+			]
+		},
+		{
+			"id": "dc872b21-4a20-4972-a5ba-80ecf004d6b0",
+			"name": "09 - Nombre duplicado al reemplazar",
+			"url": "http://localhost:3000/teams/10",
+			"time": 10,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"HTTP 409": true
+			},
+			"testPassFailCounts": {
+				"HTTP 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"HTTP 409": true
+				}
+			]
+		},
+		{
+			"id": "bf3d7312-566a-405a-a70c-a275b96bc772",
+			"name": "10 - Verificar que el conflicto no cambió el equipo B",
+			"url": "http://localhost:3000/teams/10",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Nombre original conservado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Nombre original conservado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Nombre original conservado": true
+				}
+			]
+		},
+		{
+			"id": "ddec903a-6231-4c4f-893b-d6913fe5a1c0",
+			"name": "11 - Reemplazar equipo A completo",
+			"url": "http://localhost:3000/teams/9",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Se actualizó base": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Se actualizó base": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Se actualizó base": true
+				}
+			]
+		},
+		{
+			"id": "898c5e08-29ec-4739-9086-0b7a65dbb42c",
+			"name": "12 - Nombre obligatorio al crear",
+			"url": "http://localhost:3000/teams",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "447200db-8aa6-43bd-a76a-def0e5880aa8",
+			"name": "13 - PUT requiere datos completos",
+			"url": "http://localhost:3000/teams/9",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "24fa5a94-5de6-4e4f-99d2-699c6eafb503",
+			"name": "14 - Año fuera del rango del esquema",
+			"url": "http://localhost:3000/teams",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "1ed8961c-de81-487d-a053-fd210b479357",
+			"name": "15 - Booleano inválido",
+			"url": "http://localhost:3000/teams",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "a28dd258-f821-46a3-b0e5-a6d44457cad6",
+			"name": "16 - Propiedad no permitida",
+			"url": "http://localhost:3000/teams",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "14980b54-8d2d-4fb8-a91a-baf9e4da72ef",
+			"name": "17 - Crear personaje A con poder mínimo y equipo",
+			"url": "http://localhost:3000/characters",
+			"time": 10,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true,
+				"Equipo asociado correcto": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Equipo asociado correcto": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"HTTP 201": true,
+					"Equipo asociado correcto": true
+				}
+			]
+		},
+		{
+			"id": "e11e4ac6-778d-4924-baeb-051694afd514",
+			"name": "18 - Crear personaje B retirado sin equipo y poder máximo",
+			"url": "http://localhost:3000/characters",
+			"time": 8,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true,
+				"Sin equipo": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Sin equipo": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"HTTP 201": true,
+					"Sin equipo": true
+				}
+			]
+		},
+		{
+			"id": "a3cbd01f-6b09-413e-8d90-9383408a717a",
+			"name": "19 - Consultar personaje con datos del equipo",
+			"url": "http://localhost:3000/characters/20",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Equipo asociado correcto": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Equipo asociado correcto": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Equipo asociado correcto": true
+				}
+			]
+		},
+		{
+			"id": "d2fd4104-cb3c-4cc0-a293-c707141580bf",
+			"name": "20 - Consultar personajes de equipo A",
+			"url": "http://localhost:3000/teams/9/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Contiene al personaje A": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Contiene al personaje A": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Contiene al personaje A": true
+				}
+			]
+		},
+		{
+			"id": "b0c91c5c-a9bc-4d74-a803-0cbf01e1a116",
+			"name": "21 - Filtrar por equipo",
+			"url": "http://localhost:3000/characters?teamId=9",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Filtro por equipo correcto": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Filtro por equipo correcto": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Filtro por equipo correcto": true
+				}
+			]
+		},
+		{
+			"id": "6d51cedf-a6ac-4379-8693-3c45d51beff7",
+			"name": "22 - Filtrar por estado",
+			"url": "http://localhost:3000/characters?status=RETIRED",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Solo retirados e incluye al personaje B": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Solo retirados e incluye al personaje B": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Solo retirados e incluye al personaje B": true
+				}
+			]
+		},
+		{
+			"id": "ae753c28-77d2-4322-9605-4bd1ac3335dd",
+			"name": "23 - Combinar filtros",
+			"url": "http://localhost:3000/characters?status=ACTIVE&teamId=9",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Solo personaje A activo": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Solo personaje A activo": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Solo personaje A activo": true
+				}
+			]
+		},
+		{
+			"id": "d35e51a8-caa6-489f-aafd-029a1ab8c79d",
+			"name": "24 - Filtro combinado sin coincidencias",
+			"url": "http://localhost:3000/characters?status=MISSING&teamId=9",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Lista vacía": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Lista vacía": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Lista vacía": true
+				}
+			]
+		},
+		{
+			"id": "a2a95f56-5e4b-4df3-aa57-ed70a4295638",
+			"name": "25 - Alias duplicado al crear",
+			"url": "http://localhost:3000/characters",
+			"time": 5,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"HTTP 409": true
+			},
+			"testPassFailCounts": {
+				"HTTP 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 409": true
+				}
+			]
+		},
+		{
+			"id": "60f98e4b-96ef-4a1f-ad13-ea8c55edc6b2",
+			"name": "26 - Alias duplicado al reemplazar",
+			"url": "http://localhost:3000/characters/21",
+			"time": 7,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"HTTP 409": true
+			},
+			"testPassFailCounts": {
+				"HTTP 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 409": true
+				}
+			]
+		},
+		{
+			"id": "1853a85a-b000-48fa-848a-42e539dd2363",
+			"name": "27 - Poder menor que 1",
+			"url": "http://localhost:3000/characters",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "74efbf66-4208-462c-b769-3c87d69e37f9",
+			"name": "28 - Poder mayor que 100",
+			"url": "http://localhost:3000/characters",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "afa4fc60-c475-4ae1-8e33-b6920366372b",
+			"name": "29 - Poder decimal",
+			"url": "http://localhost:3000/characters",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "b4d69c28-eb09-4e62-a681-848372d6069b",
+			"name": "30 - Estado inválido al crear",
+			"url": "http://localhost:3000/characters",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "d89fe552-3619-4ab1-bd04-738c69a1f72f",
+			"name": "31 - Estado inválido al reemplazar",
+			"url": "http://localhost:3000/characters/20",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "504fc7ca-6f2c-4fb2-97f3-449e0dfc7144",
+			"name": "32 - Estado inválido al cambiar solo estado",
+			"url": "http://localhost:3000/characters/20/status",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "8771e248-9d96-4f4a-976f-e8aaa1719b65",
+			"name": "33 - Estado inválido en filtros",
+			"url": "http://localhost:3000/characters?status=INVALID",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "4f3f8d16-54c0-4155-9a1f-83cd698d6b5a",
+			"name": "34 - Equipo inválido en filtros",
+			"url": "http://localhost:3000/characters?teamId=abc",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "f95f4f41-b69d-4520-845b-8b7cdd71b3c5",
+			"name": "35 - Datos obligatorios ausentes",
+			"url": "http://localhost:3000/characters",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "b57692b3-24f8-4277-a3da-0d3edb33c93e",
+			"name": "36 - Consultar equipo inexistente",
+			"url": "http://localhost:3000/teams/2147483647",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "06ecf6df-e314-4d67-a48d-e379fc01a777",
+			"name": "37 - Consultar personajes de equipo inexistente",
+			"url": "http://localhost:3000/teams/2147483647/characters",
+			"time": 3,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "92558511-b9e5-4687-9bb9-df73cc1d5b94",
+			"name": "38 - Reemplazar equipo inexistente",
+			"url": "http://localhost:3000/teams/2147483647",
+			"time": 5,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "0ac5cdb9-759c-41b0-9ee2-ee4824875df3",
+			"name": "39 - Asignar a equipo inexistente",
+			"url": "http://localhost:3000/teams/2147483647/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "a1705be2-3564-4916-bd16-0f0bf4bc6d59",
+			"name": "40 - Eliminar equipo inexistente",
+			"url": "http://localhost:3000/teams/2147483647",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "d06c26ef-33b2-4c7c-bbac-18064d51f097",
+			"name": "41 - Consultar personaje inexistente",
+			"url": "http://localhost:3000/characters/2147483647",
+			"time": 3,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "d19d14b5-be32-46a4-a4a9-b97274aa707f",
+			"name": "42 - Reemplazar personaje inexistente",
+			"url": "http://localhost:3000/characters/2147483647",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "31e4dd81-b6aa-4bdf-ad72-7edc9a6406f4",
+			"name": "43 - Cambiar estado de personaje inexistente",
+			"url": "http://localhost:3000/characters/2147483647/status",
+			"time": 5,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "66cd76ba-782c-486e-91ac-65172fae1d1c",
+			"name": "44 - Eliminar personaje inexistente",
+			"url": "http://localhost:3000/characters/2147483647",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "4acd5934-7f12-4fca-87a3-2f5e8825859c",
+			"name": "45 - Crear personaje con equipo inexistente",
+			"url": "http://localhost:3000/characters",
+			"time": 6,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "b2d0d0db-7a26-440d-b085-daa3db46c8c6",
+			"name": "46 - Reemplazar personaje con equipo inexistente",
+			"url": "http://localhost:3000/characters/20",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "9a0489d2-d287-4e43-a87e-86b6175ea7f0",
+			"name": "47 - Crear personaje en equipo inactivo",
+			"url": "http://localhost:3000/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "f0ce9fb6-ff07-43c6-a0ac-23c47fbd78c6",
+			"name": "48 - Reemplazar personaje con equipo inactivo",
+			"url": "http://localhost:3000/characters/20",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "b13f4252-6f3e-4852-af93-5ab28a1ffe1a",
+			"name": "49 - Asignar personajes a equipo inactivo",
+			"url": "http://localhost:3000/teams/11/characters",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "5959aa5c-a678-4e0b-a1e0-56382adc5db9",
+			"name": "50 - Impedir RETIRED a INJURED mediante PATCH",
+			"url": "http://localhost:3000/characters/21/status",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "68b558d3-6a31-4f7b-9578-36bd38932b57",
+			"name": "51 - Verificar que conserva RETIRED",
+			"url": "http://localhost:3000/characters/21",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Sigue retirado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Sigue retirado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Sigue retirado": true
+				}
+			]
+		},
+		{
+			"id": "6da4dcd8-13e7-4487-b070-336f0e1f49e7",
+			"name": "52 - Permitir RETIRED a ACTIVE",
+			"url": "http://localhost:3000/characters/21/status",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Estado ACTIVE": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Estado ACTIVE": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Estado ACTIVE": true
+				}
+			]
+		},
+		{
+			"id": "2163d88e-3a10-486b-913b-7c7684ec6c7e",
+			"name": "53 - Permitir ACTIVE a INJURED",
+			"url": "http://localhost:3000/characters/21/status",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Estado INJURED": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Estado INJURED": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Estado INJURED": true
+				}
+			]
+		},
+		{
+			"id": "a2a0ecf6-0e15-451c-99fa-6fb49b0483cb",
+			"name": "54 - Reemplazo completo vuelve a RETIRED",
+			"url": "http://localhost:3000/characters/21",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Estado RETIRED": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Estado RETIRED": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Estado RETIRED": true
+				}
+			]
+		},
+		{
+			"id": "c8bdc527-3e42-4e5d-b34d-6d7eb43f6fb4",
+			"name": "55 - Impedir RETIRED a INJURED también mediante PUT",
+			"url": "http://localhost:3000/characters/21",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "4e37f62c-9d62-4c91-b9ef-7283f6f73efe",
+			"name": "56 - Reactivar personaje B para asignaciones",
+			"url": "http://localhost:3000/characters/21/status",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "98b7d58d-f2fd-4399-8746-e2eeab786a38",
+			"name": "57 - PATCH rechaza lista vacía",
+			"url": "http://localhost:3000/teams/10/characters",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "bbf04686-2842-459f-ba4c-d74d07aa1ec2",
+			"name": "58 - PATCH con un personaje inexistente",
+			"url": "http://localhost:3000/teams/10/characters",
+			"time": 6,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "3abfe3f8-a6a7-4f12-b4e7-694bc7de01c4",
+			"name": "59 - Verificar que PATCH fallido no reasignó al personaje A",
+			"url": "http://localhost:3000/characters/20",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Equipo asociado correcto": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Equipo asociado correcto": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Equipo asociado correcto": true
+				}
+			]
+		},
+		{
+			"id": "9d667080-f894-4c77-a35e-3ebda26400ec",
+			"name": "60 - POST con un personaje inexistente",
+			"url": "http://localhost:3000/teams",
+			"time": 6,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "eb64f0e9-f27d-4311-a854-96431ac7f9cb",
+			"name": "61 - Verificar rollback del equipo fallido y personaje",
+			"url": "http://localhost:3000/teams",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"El equipo fallido no quedó creado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"El equipo fallido no quedó creado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"El equipo fallido no quedó creado": true
+				}
+			]
+		},
+		{
+			"id": "53388b9d-2b89-4d08-82f7-c482ff135b72",
+			"name": "62 - POST inactivo con personajes",
+			"url": "http://localhost:3000/teams",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"HTTP 400": true
+			},
+			"testPassFailCounts": {
+				"HTTP 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"HTTP 400": true
+				}
+			]
+		},
+		{
+			"id": "b4426d15-792b-45e1-98cb-9781162eb864",
+			"name": "63 - Verificar rollback del equipo inactivo fallido",
+			"url": "http://localhost:3000/teams",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"El equipo inactivo fallido no quedó creado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"El equipo inactivo fallido no quedó creado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"El equipo inactivo fallido no quedó creado": true
+				}
+			]
+		},
+		{
+			"id": "2c93d1b3-db0f-459b-8c82-1e09684fe831",
+			"name": "64 - Crear equipo C asignando varios personajes por POST",
+			"url": "http://localhost:3000/teams",
+			"time": 9,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"HTTP 201": true
+			},
+			"testPassFailCounts": {
+				"HTTP 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"HTTP 201": true
+				}
+			]
+		},
+		{
+			"id": "e0fd7ad7-f0d4-4c92-aa82-e3ff2902eecb",
+			"name": "65 - Verificar asignación por POST",
+			"url": "http://localhost:3000/teams/15/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Ambos personajes están en C": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Ambos personajes están en C": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Ambos personajes están en C": true
+				}
+			]
+		},
+		{
+			"id": "0b055707-9759-4a8f-bcd1-45f6e5b2aa9b",
+			"name": "66 - Reasignar varios personajes mediante PATCH",
+			"url": "http://localhost:3000/teams/10/characters",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Ambos personajes ahora están en B": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Ambos personajes ahora están en B": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Ambos personajes ahora están en B": true
+				}
+			]
+		},
+		{
+			"id": "f9985cf0-7414-42e2-931a-43ed3921828b",
+			"name": "67 - Verificar que C quedó sin personajes",
+			"url": "http://localhost:3000/teams/15/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"C vacío después de reasignación": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"C vacío después de reasignación": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"C vacío después de reasignación": true
+				}
+			]
+		},
+		{
+			"id": "a3b17946-b123-4d1e-843f-122afae5bc42",
+			"name": "68 - Impedir eliminar equipo B con personajes",
+			"url": "http://localhost:3000/teams/10",
+			"time": 8,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"HTTP 409": true
+			},
+			"testPassFailCounts": {
+				"HTTP 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"HTTP 409": true
+				}
+			]
+		},
+		{
+			"id": "4189d860-2323-42e0-9a74-650b045ff0b4",
+			"name": "69 - Desactivar equipo B mediante PUT",
+			"url": "http://localhost:3000/teams/10",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Equipo desactivado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Equipo desactivado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Equipo desactivado": true
+				}
+			]
+		},
+		{
+			"id": "82461dc6-2878-4c98-8250-ae2ea9b2a1e8",
+			"name": "70 - Verificar que desactivar conserva a sus personajes",
+			"url": "http://localhost:3000/teams/10/characters",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Conserva los dos personajes": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Conserva los dos personajes": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Conserva los dos personajes": true
+				}
+			]
+		},
+		{
+			"id": "fda2404d-5c47-4f09-a705-a5d76fa737b3",
+			"name": "71 - Reactivar equipo B para terminar las pruebas",
+			"url": "http://localhost:3000/teams/10",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "41a98066-f915-4345-87fa-a2cb50c9160e",
+			"name": "72 - Reemplazar personaje A y cambiarlo al equipo C",
+			"url": "http://localhost:3000/characters/20",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Equipo asociado correcto": true,
+				"Reemplazo aplicado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Equipo asociado correcto": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Reemplazo aplicado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Equipo asociado correcto": true,
+					"Reemplazo aplicado": true
+				}
+			]
+		},
+		{
+			"id": "b6c073ed-963b-4979-a7e1-75c6a5452626",
+			"name": "73 - Desasociar personaje A mediante PUT con team_id null",
+			"url": "http://localhost:3000/characters/20",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Personaje sin equipo": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Personaje sin equipo": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Personaje sin equipo": true
+				}
+			]
+		},
+		{
+			"id": "38fa2a80-d577-4bb6-afd5-f4f57e9a596d",
+			"name": "74 - Eliminar personaje A de prueba",
+			"url": "http://localhost:3000/characters/20",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "af9f6636-22c4-453e-a83f-30be3061d9cd",
+			"name": "75 - Confirmar eliminación de personaje A",
+			"url": "http://localhost:3000/characters/20",
+			"time": 3,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "931ee615-d6fc-41a4-987f-da6a9302098b",
+			"name": "76 - Eliminar personaje B de prueba",
+			"url": "http://localhost:3000/characters/21",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "e761ac08-d527-4e58-90e5-6186daed707f",
+			"name": "77 - Eliminar equipo A vacío",
+			"url": "http://localhost:3000/teams/9",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "d21c7e69-9ad1-4ac7-96f1-21a7bddc331b",
+			"name": "78 - Confirmar eliminación de equipo A",
+			"url": "http://localhost:3000/teams/9",
+			"time": 3,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"HTTP 404": true
+			},
+			"testPassFailCounts": {
+				"HTTP 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 404": true
+				}
+			]
+		},
+		{
+			"id": "db58134a-bc0b-4849-bc5d-df7625840361",
+			"name": "79 - Eliminar equipo B vacío",
+			"url": "http://localhost:3000/teams/10",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "b3ce747b-cb19-411a-8bec-5f0c0609f6ba",
+			"name": "80 - Eliminar equipo C vacío",
+			"url": "http://localhost:3000/teams/15",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "cd503cee-d28d-4100-bebd-6b4d53f7ce86",
+			"name": "81 - Eliminar equipo inactivo de prueba",
+			"url": "http://localhost:3000/teams/11",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"HTTP 200": true
+				}
+			]
+		},
+		{
+			"id": "efd7c824-c2f0-4a36-97f9-bfef5a7b8883",
+			"name": "82 - Verificar que los equipos previos quedaron iguales",
+			"url": "http://localhost:3000/teams",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Estado inicial de equipos conservado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Estado inicial de equipos conservado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Estado inicial de equipos conservado": true
+				}
+			]
+		},
+		{
+			"id": "059ccb20-1555-4f20-8c70-42610777c9e6",
+			"name": "83 - Verificar que los personajes previos quedaron iguales",
+			"url": "http://localhost:3000/characters",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"HTTP 200": true,
+				"Estado inicial de personajes conservado": true
+			},
+			"testPassFailCounts": {
+				"HTTP 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Estado inicial de personajes conservado": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"HTTP 200": true,
+					"Estado inicial de personajes conservado": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 425,
+	"collection": {
+		"requests": [
+			{
+				"id": "01d50ac0-b73a-40f8-84a3-a8feb9568071",
+				"method": "GET"
+			},
+			{
+				"id": "ab988faa-27cd-431f-b2f4-070d4c18150c",
+				"method": "GET"
+			},
+			{
+				"id": "6b5dc5a8-9c13-47b7-aaf2-c95dfadfae51",
+				"method": "POST"
+			},
+			{
+				"id": "94ff4f21-527b-46c8-8152-20b46330c8ee",
+				"method": "POST"
+			},
+			{
+				"id": "0422f0d3-9290-4be2-b1bf-530edcff47b1",
+				"method": "POST"
+			},
+			{
+				"id": "90f088e8-0ed7-423a-bcf3-995dc1244dd3",
+				"method": "GET"
+			},
+			{
+				"id": "92abd59f-d4e1-4e34-814e-c9d4cb3d8fdb",
+				"method": "GET"
+			},
+			{
+				"id": "9765b5a0-fdae-4e60-9f54-209f0d335958",
+				"method": "POST"
+			},
+			{
+				"id": "dc872b21-4a20-4972-a5ba-80ecf004d6b0",
+				"method": "PUT"
+			},
+			{
+				"id": "bf3d7312-566a-405a-a70c-a275b96bc772",
+				"method": "GET"
+			},
+			{
+				"id": "ddec903a-6231-4c4f-893b-d6913fe5a1c0",
+				"method": "PUT"
+			},
+			{
+				"id": "898c5e08-29ec-4739-9086-0b7a65dbb42c",
+				"method": "POST"
+			},
+			{
+				"id": "447200db-8aa6-43bd-a76a-def0e5880aa8",
+				"method": "PUT"
+			},
+			{
+				"id": "24fa5a94-5de6-4e4f-99d2-699c6eafb503",
+				"method": "POST"
+			},
+			{
+				"id": "1ed8961c-de81-487d-a053-fd210b479357",
+				"method": "POST"
+			},
+			{
+				"id": "a28dd258-f821-46a3-b0e5-a6d44457cad6",
+				"method": "POST"
+			},
+			{
+				"id": "14980b54-8d2d-4fb8-a91a-baf9e4da72ef",
+				"method": "POST"
+			},
+			{
+				"id": "e11e4ac6-778d-4924-baeb-051694afd514",
+				"method": "POST"
+			},
+			{
+				"id": "a3cbd01f-6b09-413e-8d90-9383408a717a",
+				"method": "GET"
+			},
+			{
+				"id": "d2fd4104-cb3c-4cc0-a293-c707141580bf",
+				"method": "GET"
+			},
+			{
+				"id": "b0c91c5c-a9bc-4d74-a803-0cbf01e1a116",
+				"method": "GET"
+			},
+			{
+				"id": "6d51cedf-a6ac-4379-8693-3c45d51beff7",
+				"method": "GET"
+			},
+			{
+				"id": "ae753c28-77d2-4322-9605-4bd1ac3335dd",
+				"method": "GET"
+			},
+			{
+				"id": "d35e51a8-caa6-489f-aafd-029a1ab8c79d",
+				"method": "GET"
+			},
+			{
+				"id": "a2a95f56-5e4b-4df3-aa57-ed70a4295638",
+				"method": "POST"
+			},
+			{
+				"id": "60f98e4b-96ef-4a1f-ad13-ea8c55edc6b2",
+				"method": "PUT"
+			},
+			{
+				"id": "1853a85a-b000-48fa-848a-42e539dd2363",
+				"method": "POST"
+			},
+			{
+				"id": "74efbf66-4208-462c-b769-3c87d69e37f9",
+				"method": "POST"
+			},
+			{
+				"id": "afa4fc60-c475-4ae1-8e33-b6920366372b",
+				"method": "POST"
+			},
+			{
+				"id": "b4d69c28-eb09-4e62-a681-848372d6069b",
+				"method": "POST"
+			},
+			{
+				"id": "d89fe552-3619-4ab1-bd04-738c69a1f72f",
+				"method": "PUT"
+			},
+			{
+				"id": "504fc7ca-6f2c-4fb2-97f3-449e0dfc7144",
+				"method": "PATCH"
+			},
+			{
+				"id": "8771e248-9d96-4f4a-976f-e8aaa1719b65",
+				"method": "GET"
+			},
+			{
+				"id": "4f3f8d16-54c0-4155-9a1f-83cd698d6b5a",
+				"method": "GET"
+			},
+			{
+				"id": "f95f4f41-b69d-4520-845b-8b7cdd71b3c5",
+				"method": "POST"
+			},
+			{
+				"id": "b57692b3-24f8-4277-a3da-0d3edb33c93e",
+				"method": "GET"
+			},
+			{
+				"id": "06ecf6df-e314-4d67-a48d-e379fc01a777",
+				"method": "GET"
+			},
+			{
+				"id": "92558511-b9e5-4687-9bb9-df73cc1d5b94",
+				"method": "PUT"
+			},
+			{
+				"id": "0ac5cdb9-759c-41b0-9ee2-ee4824875df3",
+				"method": "PATCH"
+			},
+			{
+				"id": "a1705be2-3564-4916-bd16-0f0bf4bc6d59",
+				"method": "DELETE"
+			},
+			{
+				"id": "d06c26ef-33b2-4c7c-bbac-18064d51f097",
+				"method": "GET"
+			},
+			{
+				"id": "d19d14b5-be32-46a4-a4a9-b97274aa707f",
+				"method": "PUT"
+			},
+			{
+				"id": "31e4dd81-b6aa-4bdf-ad72-7edc9a6406f4",
+				"method": "PATCH"
+			},
+			{
+				"id": "66cd76ba-782c-486e-91ac-65172fae1d1c",
+				"method": "DELETE"
+			},
+			{
+				"id": "4acd5934-7f12-4fca-87a3-2f5e8825859c",
+				"method": "POST"
+			},
+			{
+				"id": "b2d0d0db-7a26-440d-b085-daa3db46c8c6",
+				"method": "PUT"
+			},
+			{
+				"id": "9a0489d2-d287-4e43-a87e-86b6175ea7f0",
+				"method": "POST"
+			},
+			{
+				"id": "f0ce9fb6-ff07-43c6-a0ac-23c47fbd78c6",
+				"method": "PUT"
+			},
+			{
+				"id": "b13f4252-6f3e-4852-af93-5ab28a1ffe1a",
+				"method": "PATCH"
+			},
+			{
+				"id": "5959aa5c-a678-4e0b-a1e0-56382adc5db9",
+				"method": "PATCH"
+			},
+			{
+				"id": "68b558d3-6a31-4f7b-9578-36bd38932b57",
+				"method": "GET"
+			},
+			{
+				"id": "6da4dcd8-13e7-4487-b070-336f0e1f49e7",
+				"method": "PATCH"
+			},
+			{
+				"id": "2163d88e-3a10-486b-913b-7c7684ec6c7e",
+				"method": "PATCH"
+			},
+			{
+				"id": "a2a0ecf6-0e15-451c-99fa-6fb49b0483cb",
+				"method": "PUT"
+			},
+			{
+				"id": "c8bdc527-3e42-4e5d-b34d-6d7eb43f6fb4",
+				"method": "PUT"
+			},
+			{
+				"id": "4e37f62c-9d62-4c91-b9ef-7283f6f73efe",
+				"method": "PATCH"
+			},
+			{
+				"id": "98b7d58d-f2fd-4399-8746-e2eeab786a38",
+				"method": "PATCH"
+			},
+			{
+				"id": "bbf04686-2842-459f-ba4c-d74d07aa1ec2",
+				"method": "PATCH"
+			},
+			{
+				"id": "3abfe3f8-a6a7-4f12-b4e7-694bc7de01c4",
+				"method": "GET"
+			},
+			{
+				"id": "9d667080-f894-4c77-a35e-3ebda26400ec",
+				"method": "POST"
+			},
+			{
+				"id": "eb64f0e9-f27d-4311-a854-96431ac7f9cb",
+				"method": "GET"
+			},
+			{
+				"id": "53388b9d-2b89-4d08-82f7-c482ff135b72",
+				"method": "POST"
+			},
+			{
+				"id": "b4426d15-792b-45e1-98cb-9781162eb864",
+				"method": "GET"
+			},
+			{
+				"id": "2c93d1b3-db0f-459b-8c82-1e09684fe831",
+				"method": "POST"
+			},
+			{
+				"id": "e0fd7ad7-f0d4-4c92-aa82-e3ff2902eecb",
+				"method": "GET"
+			},
+			{
+				"id": "0b055707-9759-4a8f-bcd1-45f6e5b2aa9b",
+				"method": "PATCH"
+			},
+			{
+				"id": "f9985cf0-7414-42e2-931a-43ed3921828b",
+				"method": "GET"
+			},
+			{
+				"id": "a3b17946-b123-4d1e-843f-122afae5bc42",
+				"method": "DELETE"
+			},
+			{
+				"id": "4189d860-2323-42e0-9a74-650b045ff0b4",
+				"method": "PUT"
+			},
+			{
+				"id": "82461dc6-2878-4c98-8250-ae2ea9b2a1e8",
+				"method": "GET"
+			},
+			{
+				"id": "fda2404d-5c47-4f09-a705-a5d76fa737b3",
+				"method": "PUT"
+			},
+			{
+				"id": "41a98066-f915-4345-87fa-a2cb50c9160e",
+				"method": "PUT"
+			},
+			{
+				"id": "b6c073ed-963b-4979-a7e1-75c6a5452626",
+				"method": "PUT"
+			},
+			{
+				"id": "38fa2a80-d577-4bb6-afd5-f4f57e9a596d",
+				"method": "DELETE"
+			},
+			{
+				"id": "af9f6636-22c4-453e-a83f-30be3061d9cd",
+				"method": "GET"
+			},
+			{
+				"id": "931ee615-d6fc-41a4-987f-da6a9302098b",
+				"method": "DELETE"
+			},
+			{
+				"id": "e761ac08-d527-4e58-90e5-6186daed707f",
+				"method": "DELETE"
+			},
+			{
+				"id": "d21c7e69-9ad1-4ac7-96f1-21a7bddc331b",
+				"method": "GET"
+			},
+			{
+				"id": "db58134a-bc0b-4849-bc5d-df7625840361",
+				"method": "DELETE"
+			},
+			{
+				"id": "b3ce747b-cb19-411a-8bec-5f0c0609f6ba",
+				"method": "DELETE"
+			},
+			{
+				"id": "cd503cee-d28d-4100-bebd-6b4d53f7ce86",
+				"method": "DELETE"
+			},
+			{
+				"id": "efd7c824-c2f0-4a36-97f9-bfef5a7b8883",
+				"method": "GET"
+			},
+			{
+				"id": "059ccb20-1555-4f20-8c70-42610777c9e6",
+				"method": "GET"
+			}
+		]
+	}
+}
